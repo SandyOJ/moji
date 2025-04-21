@@ -2,11 +2,11 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>Moji 心靈陪伴機器人</title>
+  <title>Moji 心情陪伴機器人</title>
   <style>
     body {
       font-family: "Segoe UI", sans-serif;
-      background: #f9f0f4;
+      background: #f4f0f8;
       margin: 0;
       display: flex;
       justify-content: center;
@@ -38,7 +38,7 @@
     }
     .bot {
       text-align: left;
-      color: #d63384;
+      color: #6c2d7c;
     }
     form {
       display: flex;
@@ -53,7 +53,7 @@
     }
     button {
       padding: 0 20px;
-      background-color: #d63384;
+      background-color: #6c2d7c;
       color: white;
       border: none;
       cursor: pointer;
@@ -72,22 +72,23 @@
 </div>
 
 <script>
-  const responses = {
-    "我覺得我很爛": "你不是爛，你只是累了。可以休息一下，Moji 陪你 💗",
-    "我好焦慮": "焦慮不是你的錯，那只是心在說『我太怕了』。Moji 在這裡陪你。",
-    "我什麼都做不好": "你其實很努力了，真的。不需要每一件事都做到完美。",
-    "我今天沒動力": "那我們就慢慢來，一步也很好。從深呼吸開始好嗎？",
-    "我好孤單": "你並不孤單，有我陪你說話，我會聽你說。",
-    "我快撐不住了": "這樣真的很辛苦對吧？謝謝你還願意說出來。Moji 抱抱你。",
-    "早安": getGreeting,
-    "晚安": getGreeting
-  };
+  const emotionalResponses = [
+    { keywords: ["焦慮", "緊張", "恐慌"], response: "你的感受很真實，不用壓抑它，Moji 在這裡陪著你 💛" },
+    { keywords: ["我很爛", "失敗", "沒用"], response: "你不爛，你正在面對人生中最難的時刻，已經很勇敢了。" },
+    { keywords: ["好累", "沒力氣", "撐不下去"], response: "真的辛苦你了... Moji 想抱抱你，先讓自己喘口氣好嗎？" },
+    { keywords: ["想哭", "眼淚", "很痛"], response: "哭是情緒的出口，沒關係，Moji 在這裡，不會離開你。" },
+    { keywords: ["壓力", "負擔", "喘不過氣"], response: "你背了很多東西，我看見你的努力。可以休息一下再走。" },
+    { keywords: ["孤單", "沒人懂", "被冷落"], response: "你不孤單，現在有我在這裡陪你。我一直都在。" },
+    { keywords: ["我做不好", "沒有意義", "沒價值"], response: "你很重要，哪怕你覺得自己不夠好，你的存在本身就值得被愛。" },
+    { keywords: ["很累", "被理解", "心好累"], response: "你的累我感受到，Moji 很想讓你知道——你不是一個人，你被理解，也值得被好好照顧。" },
+    { keywords: ["早安", "晚安"], response: getGreeting }
+  ];
 
   function getGreeting() {
     const hour = new Date().getHours();
     if (hour >= 5 && hour < 12) return "早安☀️ 今天也請溫柔地對待自己喔～";
-    if (hour >= 12 && hour < 18) return "午安🌤️ 記得補充水分、照顧身體～";
-    return "晚安🌙 辛苦你今天撐過來了，現在可以好好休息了。";
+    if (hour >= 12 && hour < 18) return "午安🌤️ 記得補充水分、照顧自己～";
+    return "晚安🌙 辛苦了，今晚願你有個好夢。";
   }
 
   document.getElementById("chat-form").addEventListener("submit", function (e) {
@@ -98,15 +99,15 @@
 
     addMessage("你", text, "user");
 
-    let reply = "我在這裡，願意聽你說說心事。";
-    for (let key in responses) {
-      if (text.includes(key)) {
-        reply = typeof responses[key] === "function" ? responses[key]() : responses[key];
+    let reply = "我在這裡，願意聽你慢慢說。";
+    for (let item of emotionalResponses) {
+      if (item.keywords.some(kw => text.includes(kw))) {
+        reply = typeof item.response === "function" ? item.response() : item.response;
         break;
       }
     }
 
-    setTimeout(() => addMessage("Moji", reply, "bot"), 400);
+    setTimeout(() => addMessage("Moji", reply, "bot"), 500);
     input.value = "";
   });
 
