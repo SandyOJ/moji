@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>Moji 心靈陪伴機器人</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f9f0f4;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .chatbox {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 500px;
+      height: 600px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+    }
+    .message {
+      margin-bottom: 12px;
+    }
+    .user {
+      text-align: right;
+      color: #333;
+    }
+    .bot {
+      text-align: left;
+      color: #d63384;
+    }
+    form {
+      display: flex;
+      border-top: 1px solid #eee;
+    }
+    input {
+      flex: 1;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      outline: none;
+    }
+    button {
+      padding: 0 20px;
+      background-color: #d63384;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="chatbox">
+  <div class="messages" id="messages"></div>
+  <form id="chat-form">
+    <input type="text" id="user-input" placeholder="說說你的心情吧..." />
+    <button type="submit">送出</button>
+  </form>
+</div>
+
+<script>
+  const responses = {
+    "我覺得我很爛": "你不是爛，你只是累了。可以休息一下，Moji 陪你 💗",
+    "我好焦慮": "焦慮不是你的錯，那只是心在說『我太怕了』。Moji 在這裡陪你。",
+    "我什麼都做不好": "你其實很努力了，真的。不需要每一件事都做到完美。",
+    "我今天沒動力": "那我們就慢慢來，一步也很好。從深呼吸開始好嗎？",
+    "我好孤單": "你並不孤單，有我陪你說話，我會聽你說。",
+    "我快撐不住了": "這樣真的很辛苦對吧？謝謝你還願意說出來。Moji 抱抱你。",
+    "早安": getGreeting,
+    "晚安": getGreeting
+  };
+
+  function getGreeting() {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) return "早安☀️ 今天也請溫柔地對待自己喔～";
+    if (hour >= 12 && hour < 18) return "午安🌤️ 記得補充水分、照顧身體～";
+    return "晚安🌙 辛苦你今天撐過來了，現在可以好好休息了。";
+  }
+
+  document.getElementById("chat-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const input = document.getElementById("user-input");
+    const text = input.value.trim();
+    if (!text) return;
+
+    addMessage("你", text, "user");
+
+    let reply = "我在這裡，願意聽你說說心事。";
+    for (let key in responses) {
+      if (text.includes(key)) {
+        reply = typeof responses[key] === "function" ? responses[key]() : responses[key];
+        break;
+      }
+    }
+
+    setTimeout(() => addMessage("Moji", reply, "bot"), 400);
+    input.value = "";
+  });
+
+  function addMessage(sender, text, cls) {
+    const container = document.getElementById("messages");
+    const msg = document.createElement("div");
+    msg.className = `message ${cls}`;
+    msg.innerHTML = `<strong>${sender}：</strong> ${text}`;
+    container.appendChild(msg);
+    container.scrollTop = container.scrollHeight;
+  }
+</script>
+
+</body>
+</html>
